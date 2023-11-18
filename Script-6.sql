@@ -4,8 +4,9 @@
 SELECT name,
        time
 FROM sounds
+WHERE time = (SELECT MAX(time) FROM sounds)
 ORDER BY time DESC
-LIMIT 1;
+
 
 --2
 SELECT name
@@ -20,12 +21,14 @@ WHERE release_date >= '2018-01-01' AND release_date <= '2023-01-01'
 --4
 SELECT nickname
 FROM executors
-WHERE LENGTH(nickname) = POSITION(' ' IN nickname) + 1 OR POSITION(' ' IN nickname) = 0
+WHERE nickname NOT LIKE '% %'
+
 
 --5 
 SELECT name
 FROM sounds
-WHERE name LIKE '%My%' OR name LIKE '%my%'
+WHERE name ILIKE '%My%'
+--WHERE name LIKE '%My%' OR name LIKE '%my%'
 
 
 -- Задание 3
@@ -54,7 +57,9 @@ SELECT DISTINCT e.nickname
 FROM executors e
 LEFT JOIN albumsexecutors ae ON e.executor_id = ae.executor_id
 LEFT JOIN albums a ON ae.album_id = a.album_id
-WHERE a.release_year IS NULL OR a.release_year <> '2020-01-01';
+WHERE a.release_year < (SELECT release_year FROM albums WHERE release_year LIKE '%2020%')
+ORDER BY e.nickname
+
 
 --5
 SELECT c.name AS collection_name
